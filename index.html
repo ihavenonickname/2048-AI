@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>2048</title>
+</head>
+
+<body>
+    <div id="app">
+        <button v-on:click="startNewGame">Start New Game</button>
+        <button v-on:click="makeAiPlay">Make AI Play</button>
+
+        <div id="board">
+            <div v-for="row in board">
+                <label v-for="cell in row">{{ cell || '•' }} </label>
+            </div>
+        </div>
+        <div>
+            <div>
+                <a href="#" v-on:click="makeMove(direction.UP)"><i class="fas fa-arrow-up"></i></a>
+            </div>
+            <div>
+                <a href="#" v-on:click="makeMove(direction.LEFT)"><i class="fas fa-arrow-left"></i></a>
+                <a href="#" v-on:click="makeMove(direction.DOWN)"><i class="fas fa-arrow-down"></i></a>
+                <a href="#" v-on:click="makeMove(direction.RIGHT)"><i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="module">
+    import * as game from './game.mjs'
+    import { findBestMove } from './ai.mjs'
+    import { copyBoard } from './helper.mjs'
+    import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.esm.browser.js'
+
+    const app = new Vue({
+        el: '#app',
+        data() {
+            return {
+                direction: game.Direction,
+                board: [
+                    [null, null, null, null],
+                    [null, null, null, null],
+                    [null, null, null, null],
+                    [null, null, null, null],
+                ],
+            }
+        },
+        methods: {
+            startNewGame() {
+                this.board = game.initializeBoard()
+            },
+            makeAiPlay() {
+                this.makeMove(findBestMove(this.board))
+            },
+            makeMove(direction) {
+                const board = copyBoard(this.board)
+                game.play(board, direction)
+                game.fillNextRound(board)
+                this.board = board
+            }
+        },
+        mounted() {
+            this.startNewGame()
+        }
+    })
+</script>
+
+</html>
