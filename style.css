@@ -1,0 +1,22 @@
+#board {
+    display: flex;
+    flex-direction: column;
+    height: 450px;
+    width: 450px;
+    background-color: pink;
+}
+
+#board > .row {
+    display: flex;
+    height: 100%;
+}
+
+#board > .row > .cell {
+    width: 100%;
+    height: 100%;
+    font-size: 32px;
+    font-family: monospace;
+    text-align: center;
+    border:solid;
+    border-width: 1px;
+}

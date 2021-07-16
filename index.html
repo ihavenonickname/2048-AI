@@ -5,21 +5,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+        integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./style.css">
     <title>2048</title>
 </head>
 
+<script src="./vendor/vue.js"></script>
+<script src="./helper.js"></script>
+<script src="./game.js"></script>
+<script src="./ai.js"></script>
+
 <body>
     <div id="app">
-        <button v-on:click="startNewGame">Start New Game</button>
-        <button v-on:click="makeAiPlay">Make AI Play</button>
+        <button v-on:click="toggleAi">{{ isAiPlaying ? 'Stop AI' : 'Start AI' }}</button>
+        <button v-show="!isAiPlaying" v-on:click="startNewGame">Start New Game</button>
 
         <div id="board">
-            <div v-for="row in board">
-                <label v-for="cell in row">{{ cell || '•' }} </label>
+            <div v-for="row in board" class="row">
+                <div v-for="cell in row" class="cell"><div>{{ cell || ' ' }}</div></div>
             </div>
         </div>
-        <div>
+
+        <div v-show="!isAiPlaying">
             <div>
                 <a href="#" v-on:click="makeMove(direction.UP)"><i class="fas fa-arrow-up"></i></a>
             </div>
@@ -32,41 +41,69 @@
     </div>
 </body>
 
-<script type="module">
-    import * as game from './game.mjs'
-    import { findBestMove } from './ai.mjs'
-    import { copyBoard } from './helper.mjs'
-    import Vue from 'https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.esm.browser.js'
+<script>
+</script>
+
+<script>
+    const worker = new Worker('worker.js')
+    let game = new Game()
+
+    function postAiWork() {
+        worker.postMessage({
+            type: 'find-best-direction',
+            board: game.board
+        })
+    }
 
     const app = new Vue({
         el: '#app',
         data() {
             return {
-                direction: game.Direction,
-                board: [
-                    [null, null, null, null],
-                    [null, null, null, null],
-                    [null, null, null, null],
-                    [null, null, null, null],
-                ],
+                direction: Direction,
+                board: Helper.copyBoard(game.board),
+                isAiPlaying: false
             }
         },
         methods: {
             startNewGame() {
-                this.board = game.initializeBoard()
+                game = new Game()
+                this.board = Helper.copyBoard(game.board)
             },
-            makeAiPlay() {
-                this.makeMove(findBestMove(this.board))
+            toggleAi() {
+                if (game.isOver) {
+                    alert('Game is over! Start a new game')
+                } else if (this.isAiPlaying) {
+                    this.isAiPlaying = false
+                } else {
+                    this.isAiPlaying = true
+                    postAiWork()
+                }
             },
             makeMove(direction) {
-                const board = copyBoard(this.board)
-                game.play(board, direction)
-                game.fillNextRound(board)
-                this.board = board
+                if (game.isOver) {
+                    alert('Game is over! Start a new game')
+                } else {
+                    game.play(direction)
+                    this.board = Helper.copyBoard(game.board)
+                }
             }
         },
         mounted() {
-            this.startNewGame()
+            worker.addEventListener('message', e => {
+                switch (e.data.type) {
+                    case 'find-best-direction': {
+                        this.makeMove(e.data.direction)
+
+                        if (this.isAiPlaying) {
+                            if (game.isOver) {
+                                this.isAiPlaying = false
+                            } else {
+                                postAiWork()
+                            }
+                        }
+                    }
+                }
+            })
         }
     })
 </script>
