@@ -19,8 +19,12 @@
 
 <body>
     <div id="app">
-        <button v-on:click="toggleAi">{{ isAiPlaying ? 'Stop AI' : 'Start AI' }}</button>
-        <button v-show="!isAiPlaying" v-on:click="startNewGame">Start New Game</button>
+        <div class="wraper-btn">
+            <button v-on:click="toggleAi">{{ isAiPlaying ? 'Stop AI' : 'Start AI' }}</button>
+        </div>
+        <div class="wraper-btn">
+            <button :disabled="isAiPlaying" v-on:click="startNewGame">Start New Game</button>
+        </div>
 
         <div id="board">
             <div v-for="row in board" class="row">
@@ -28,14 +32,14 @@
             </div>
         </div>
 
-        <div v-show="!isAiPlaying">
-            <div>
-                <a href="#" v-on:click="makeMove(direction.UP)"><i class="fas fa-arrow-up"></i></a>
+        <div :disabled="isAiPlaying">
+            <div class="wraper-move">
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.UP)" href="#"><i class="fas fa-arrow-up"></i></a>
             </div>
-            <div>
-                <a href="#" v-on:click="makeMove(direction.LEFT)"><i class="fas fa-arrow-left"></i></a>
-                <a href="#" v-on:click="makeMove(direction.DOWN)"><i class="fas fa-arrow-down"></i></a>
-                <a href="#" v-on:click="makeMove(direction.RIGHT)"><i class="fas fa-arrow-right"></i></a>
+            <div class="wraper-move">
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.LEFT)" href="#"><i class="fas fa-arrow-left"></i></a>
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.DOWN)" href="#"><i class="fas fa-arrow-down"></i></a>
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.RIGHT)" href="#"><i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </div>

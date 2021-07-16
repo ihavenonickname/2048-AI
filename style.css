@@ -1,9 +1,22 @@
+body, html {
+    height: 100%;
+    overflow-y: hidden;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+}
+
 #board {
     display: flex;
     flex-direction: column;
-    height: 450px;
-    width: 450px;
-    background-color: pink;
+    height: 90vw;
+    width: 90%;
+    margin: 0 auto;
+    background-color: rgba(255, 160, 122, 0.288);
 }
 
 #board > .row {
@@ -19,4 +32,39 @@
     text-align: center;
     border:solid;
     border-width: 1px;
+}
+
+.wraper-btn {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.wraper-move {
+    margin-top: 10px;
+    text-align: center;
+    font-size: xx-large;
+}
+
+.wraper-move > a {
+    margin: 10px;
+    color:lightsalmon;
+}
+
+a[disabled] {
+    pointer-events: none;
+    cursor: default;
+    color:gray;
+}
+
+@media only screen and (min-width: 768px) {
+    #board {
+        height: 450px;
+        width: 450px;
+    }
+
+    #app {
+        justify-content: initial;
+        margin-top: 50px;
+    }
 }
