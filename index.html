@@ -12,104 +12,56 @@
     <title>2048</title>
 </head>
 
-<script src="./vendor/vue.js"></script>
-<script src="./helper.js"></script>
-<script src="./game.js"></script>
-<script src="./ai.js"></script>
-
 <body>
     <div id="app">
-        <div class="wraper-btn">
+        <div class="input-control">
+            <label>
+                AI Aggressiveness:
+                <select v-model="aiAggressiveness">
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </label>
+        </div>
+        <div class="input-control">
             <button v-on:click="toggleAi">{{ isAiPlaying ? 'Stop AI' : 'Start AI' }}</button>
         </div>
-        <div class="wraper-btn">
+        <div class="input-control">
             <button :disabled="isAiPlaying" v-on:click="startNewGame">Start New Game</button>
+        </div>
+
+        <div v-if="isAiPlaying" id="ai-timing">
+            Processing time per move: {{ averageAitimings }} ms
         </div>
 
         <div id="board">
             <div v-for="row in board" class="row">
-                <div v-for="cell in row" class="cell"><div>{{ cell || ' ' }}</div></div>
+                <div v-for="cell in row" class="cell">
+                    <div>{{ cell || ' ' }}</div>
+                </div>
             </div>
         </div>
 
         <div :disabled="isAiPlaying">
             <div class="wraper-move">
-                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.UP)" href="#"><i class="fas fa-arrow-up"></i></a>
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.UP)" href="#"><i
+                        class="fas fa-arrow-up"></i></a>
             </div>
             <div class="wraper-move">
-                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.LEFT)" href="#"><i class="fas fa-arrow-left"></i></a>
-                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.DOWN)" href="#"><i class="fas fa-arrow-down"></i></a>
-                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.RIGHT)" href="#"><i class="fas fa-arrow-right"></i></a>
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.LEFT)" href="#"><i
+                        class="fas fa-arrow-left"></i></a>
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.DOWN)" href="#"><i
+                        class="fas fa-arrow-down"></i></a>
+                <a :disabled="isAiPlaying" v-on:click="makeMove(direction.RIGHT)" href="#"><i
+                        class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </div>
 </body>
 
-<script>
-</script>
-
-<script>
-    const worker = new Worker('worker.js')
-    let game = new Game()
-
-    function postAiWork() {
-        worker.postMessage({
-            type: 'find-best-direction',
-            board: game.board
-        })
-    }
-
-    const app = new Vue({
-        el: '#app',
-        data() {
-            return {
-                direction: Direction,
-                board: Helper.copyBoard(game.board),
-                isAiPlaying: false
-            }
-        },
-        methods: {
-            startNewGame() {
-                game = new Game()
-                this.board = Helper.copyBoard(game.board)
-            },
-            toggleAi() {
-                if (game.isOver) {
-                    alert('Game is over! Start a new game')
-                } else if (this.isAiPlaying) {
-                    this.isAiPlaying = false
-                } else {
-                    this.isAiPlaying = true
-                    postAiWork()
-                }
-            },
-            makeMove(direction) {
-                if (game.isOver) {
-                    alert('Game is over! Start a new game')
-                } else {
-                    game.play(direction)
-                    this.board = Helper.copyBoard(game.board)
-                }
-            }
-        },
-        mounted() {
-            worker.addEventListener('message', e => {
-                switch (e.data.type) {
-                    case 'find-best-direction': {
-                        this.makeMove(e.data.direction)
-
-                        if (this.isAiPlaying) {
-                            if (game.isOver) {
-                                this.isAiPlaying = false
-                            } else {
-                                postAiWork()
-                            }
-                        }
-                    }
-                }
-            })
-        }
-    })
-</script>
-
-</html>
+<script src="./vendor/vue.js"></script>
+<script src="./helper.js"></script>
+<script src="./game.js"></script>
+<script src="./ai.js"></script>
+<script src="./page.js"></script>

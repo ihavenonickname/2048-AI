@@ -34,7 +34,7 @@ body, html {
     border-width: 1px;
 }
 
-.wraper-btn {
+.input-control {
     display: flex;
     justify-content: center;
     margin-bottom: 10px;
@@ -55,6 +55,10 @@ a[disabled] {
     pointer-events: none;
     cursor: default;
     color:gray;
+}
+
+#ai-timing {
+    text-align: center;
 }
 
 @media only screen and (min-width: 768px) {

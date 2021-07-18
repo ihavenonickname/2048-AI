@@ -1,5 +1,4 @@
-function findBestDirection(game) {
-    const nSimulations = 2_000
+function findBestDirection(game, nSimulations) {
     const directions = [
         Direction.UP,
         Direction.DOWN,
