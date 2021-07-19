@@ -63,6 +63,10 @@ const app = new Vue({
         }
     },
     mounted() {
+        setTimeout(() => {
+            document.getElementById('loading').classList.add('invisible')
+        }, 1000)
+
         worker.addEventListener('message', ({ data }) => {
             switch (data.type) {
                 case 'find-best-direction': {

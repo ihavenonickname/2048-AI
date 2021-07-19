@@ -3,6 +3,16 @@ body, html {
     overflow-y: hidden;
 }
 
+#loading {
+    position: absolute;
+    text-align: center;
+    padding-top: 49vh;
+    height: 100%;
+    width: 100%;
+    background-color: white;
+    font-size: larger;
+}
+
 #app {
     display: flex;
     flex-direction: column;
@@ -59,6 +69,10 @@ a[disabled] {
 
 #ai-timing {
     text-align: center;
+}
+
+.invisible {
+    display: none;
 }
 
 @media only screen and (min-width: 768px) {
